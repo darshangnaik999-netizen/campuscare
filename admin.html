@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <h1>Admin Dashboard</h1>
+
+    <div id="complaints"></div>
+
+    <script>
+
+        function showComplaints() {
+
+            let complaintsDiv = document.getElementById("complaints");
+
+            complaintsDiv.innerHTML = "";
+
+            let found = false;
+
+            for (let i = 0; i < localStorage.length; i++) {
+
+                let key = localStorage.key(i);
+                let data = localStorage.getItem(key);
+
+                try {
+
+                    let complaint = JSON.parse(data);
+
+                    if (complaint.id) {
+
+                        found = true;
+
+                        complaintsDiv.innerHTML += `
+
+                        <div style="
+                            background:white;
+                            padding:20px;
+                            margin:15px;
+                            border-radius:10px;
+                            text-align:left;
+                        ">
+
+                            <h3>Complaint ID: ${complaint.id}</h3>
+
+                            <p>
+                                <b>Student:</b> ${complaint.name}
+                            </p>
+
+                            <p>
+                                <b>Student ID:</b> ${complaint.studentId}
+                            </p>
+
+                            <p>
+                                <b>Category:</b> ${complaint.category}
+                            </p>
+
+                            <p>
+                                <b>Complaint:</b> ${complaint.complaint}
+                            </p>
+
+                            <p>
+                                <b>Status:</b>
+                                ${complaint.status}
+                            </p>
+
+                            <select onchange="updateStatus('${complaint.id}', this.value)">
+
+                                <option value="Received"
+                                ${complaint.status === "Received" ? "selected" : ""}>
+                                    Received
+                                </option>
+
+                                <option value="In Progress"
+                                ${complaint.status === "In Progress" ? "selected" : ""}>
+                                    In Progress
+                                </option>
+
+                                <option value="Resolved"
+                                ${complaint.status === "Resolved" ? "selected" : ""}>
+                                    Resolved
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        `;
+                    }
+
+                } catch (error) {
+
+                    // Ignore non-complaint data
+
+                }
+
+            }
+
+            if (!found) {
+
+                complaintsDiv.innerHTML =
+                    "<h3>No complaints submitted yet.</h3>";
+
+            }
+
+        }
+
+
+        function updateStatus(id, newStatus) {
+
+            let data = localStorage.getItem(id);
+
+            if (data) {
+
+                let complaint = JSON.parse(data);
+
+                complaint.status = newStatus;
+
+                localStorage.setItem(
+                    id,
+                    JSON.stringify(complaint)
+                );
+
+                alert(
+                    "Complaint " +
+                    id +
+                    " updated to " +
+                    newStatus
+                );
+
+                showComplaints();
+            }
+
+        }
+
+
+        showComplaints();
+
+    </script>
+
+</body>
+
+</html>
